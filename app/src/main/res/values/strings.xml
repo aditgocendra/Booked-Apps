@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">BookedApps</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="cara_pemesanan">
+        Customer melakukan pemesanan dengan memilih paket yang telah disediakan.\n\n
+        Customer memilih hari dan waktu yang disediakan.\n\n
+        Customer membayar DP ke nomor rekening yang telah disediakan.\n\n
+        Customer memberikan bukti pembayaran DP pemesanan, melalui chat dalam aplikasi.
+    </string>
+    <string name="note_pembyaran">
+        Note : \n
+        * Pembayaran dilakukan setelah admin mengkonfirmasi jadwal pesanan\n
+        * Pembayaran DP berjumlah minimal Rp. 50.000
+    </string>
+
+    <string-array name="user_role">
+        <item>Admin</item>
+        <item>Customer</item>
+    </string-array>
+</resources>

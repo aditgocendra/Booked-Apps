@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="5dp"
+    android:elevation="5dp"
+    android:id="@+id/card_user_edit">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <!--DATA-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:layout_weight="0.9">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.7"
+                    />
+
+                <TextView
+                    android:id="@+id/username_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=": Deni maulana"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.3"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.7"
+                    />
+
+                <TextView
+                    android:id="@+id/email_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=": denimaulana@gmail.com"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.3"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Telp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.7"
+                    />
+
+                <TextView
+                    android:id="@+id/phone_number_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=": 08954542158"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.3"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Role"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.7"
+                    />
+
+                <TextView
+                    android:id="@+id/role_user_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=": Admin"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/light_text"
+                    android:textSize="12.5sp"
+                    android:layout_weight="0.3"
+                    />
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

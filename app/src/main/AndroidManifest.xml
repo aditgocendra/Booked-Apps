@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ark.bookedapps">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo_app"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/logo_app"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BookedApps">
+        <activity
+            android:name=".View.ProfileUser"
+            android:exported="false" />
+        <activity
+            android:name=".View.ForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".View.HistoryOrder"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageOrderAllUser"
+            android:exported="false" />
+        <activity
+            android:name=".Utility.BrokenConnection"
+            android:exported="false" />
+        <activity
+            android:name=".View.PersonalChat"
+            android:exported="false" />
+        <activity
+            android:name=".View.Chat"
+            android:exported="false" />
+        <activity
+            android:name=".View.RetryOrder"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageOrderCustomer"
+            android:exported="false" />
+        <activity
+            android:name=".View.MyOrder"
+            android:exported="false" />
+        <activity
+            android:name=".View.OrderSalon"
+            android:exported="false" />
+        <activity
+            android:name=".View.PackageDetail"
+            android:exported="false" />
+        <activity
+            android:name=".View.RekeningEdit"
+            android:exported="false" />
+        <activity
+            android:name=".View.RekeningAdd"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageRekening"
+            android:exported="false" />
+        <activity
+            android:name=".View.UserEdit"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageUser"
+            android:exported="false" />
+        <activity
+            android:name=".View.PackageEdit"
+            android:exported="false" />
+        <activity
+            android:name=".View.PackageAdd"
+            android:exported="false" />
+        <activity
+            android:name=".View.PaymentCard"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageInformation"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManagePackage"
+            android:exported="false" />
+        <activity
+            android:name=".View.InformationSalon"
+            android:exported="false" />
+        <activity
+            android:name=".View.AdministratorMenu"
+            android:exported="false" />
+        <activity
+            android:name=".View.Login"
+            android:exported="false" />
+        <activity
+            android:name=".View.Register"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.HomeApp"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".Notification.ServiceNotification"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo_app" />
+    </application>
+
+</manifest>
