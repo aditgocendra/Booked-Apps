@@ -11,5 +11,6 @@
     <color name="blue_light">#4E87DD</color>
     <color name="purple_dark">#2f2e41</color>
     <color name="light_text">#b3b3b3</color>
+    <color name="transparent">#00FFFFFF</color>
 
 </resources>

@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Pesanan Kamu"
+                android:text="Histori Pesanan"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
                 android:textSize="19sp"
