@@ -54,12 +54,7 @@ public class Chat extends AppCompatActivity {
         }
 
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
         binding.recyleChatUser.setLayoutManager(mLayout);
@@ -79,7 +74,6 @@ public class Chat extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     listChat = new ArrayList<>();
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-
                         listChat.add(dataSnapshot.getKey());
                     }
 

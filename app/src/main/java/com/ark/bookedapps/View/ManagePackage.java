@@ -41,20 +41,9 @@ public class ManagePackage extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(AdministratorMenu.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
-        binding.addFloatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(PackageAdd.class);
-            }
-        });
+        binding.addFloatBtn.setOnClickListener(view -> updateUI(PackageAdd.class));
 
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
         binding.recycleManagePackage.setLayoutManager(mLayout);
@@ -62,13 +51,10 @@ public class ManagePackage extends AppCompatActivity {
 
         setDataPackage();
 
-        binding.swipeRefreshManagePackage.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                max_load_data += 5;
-                setDataPackage();
-                binding.swipeRefreshManagePackage.setRefreshing(false);
-            }
+        binding.swipeRefreshManagePackage.setOnRefreshListener(() -> {
+            max_load_data += 5;
+            setDataPackage();
+            binding.swipeRefreshManagePackage.setRefreshing(false);
         });
 
     }

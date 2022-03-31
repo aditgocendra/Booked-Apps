@@ -120,7 +120,7 @@
 
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/card_rek_pay"
+                    android:id="@+id/card_method_pay"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
@@ -144,7 +144,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Rekening pembayaran"
+                        android:text="Metode pembayaran"
                         android:textSize="15sp"/>
 
                 </androidx.cardview.widget.CardView>

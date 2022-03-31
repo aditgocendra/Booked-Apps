@@ -36,20 +36,9 @@ public class ManageRekening extends AppCompatActivity {
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(AdministratorMenu.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
-        binding.addFloatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(RekeningAdd.class);
-            }
-        });
+        binding.addFloatBtn.setOnClickListener(view -> updateUI(RekeningAdd.class));
 
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
         binding.recycleManageRekening.setLayoutManager(mLayout);

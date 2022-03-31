@@ -30,26 +30,17 @@ public class RekeningEdit extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManageRekening.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
-        binding.saveRek.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.nameRekBankTiEdit.getText().toString().isEmpty()){
-                    binding.nameRekBankTiEdit.setError("Tidak boleh kosong");
-                }else if (binding.numberRekBankTiEdit.getText().toString().isEmpty()){
-                    binding.numberRekBankTiEdit.setError("Tidak boleh kosong");
-                }else {
-                    saveChangeRek();
-                    binding.progressCircular.setVisibility(View.VISIBLE);
-                    binding.saveRek.setEnabled(false);
-                }
+        binding.saveRek.setOnClickListener(view -> {
+            if (binding.nameRekBankTiEdit.getText().toString().isEmpty()){
+                binding.nameRekBankTiEdit.setError("Tidak boleh kosong");
+            }else if (binding.numberRekBankTiEdit.getText().toString().isEmpty()){
+                binding.numberRekBankTiEdit.setError("Tidak boleh kosong");
+            }else {
+                saveChangeRek();
+                binding.progressCircular.setVisibility(View.VISIBLE);
+                binding.saveRek.setEnabled(false);
             }
         });
 
@@ -67,23 +58,17 @@ public class RekeningEdit extends AppCompatActivity {
         String numberRekNew = binding.numberRekBankTiEdit.getText().toString();
 
         ModelRekening modelRekening = new ModelRekening(rekBankNew, numberRekNew);
-        databaseReference.child("rekening_salon").child(key).setValue(modelRekening).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.saveRek.setEnabled(true);
-                updateUI(ManageRekening.class);
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(RekeningEdit.this, "Gagal mengubah data rekening", Toast.LENGTH_SHORT).show();
-                binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.saveRek.setEnabled(true);
-                updateUI(ManageRekening.class);
-                finish();
-            }
+        databaseReference.child("rekening_salon").child(key).setValue(modelRekening).addOnSuccessListener(unused -> {
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            binding.saveRek.setEnabled(true);
+            updateUI(ManageRekening.class);
+            finish();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(RekeningEdit.this, "Gagal mengubah data rekening", Toast.LENGTH_SHORT).show();
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            binding.saveRek.setEnabled(true);
+            updateUI(ManageRekening.class);
+            finish();
         });
     }
 

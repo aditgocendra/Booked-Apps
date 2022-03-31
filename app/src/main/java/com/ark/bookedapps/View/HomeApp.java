@@ -2,21 +2,15 @@ package com.ark.bookedapps.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
-
 import com.ark.bookedapps.Adapter.AdapterHomeApp;
 import com.ark.bookedapps.Model.ModelPackage;
 import com.ark.bookedapps.Model.ModelUser;
-import com.ark.bookedapps.R;
 import com.ark.bookedapps.Utility.BrokenConnection;
 import com.ark.bookedapps.Utility.Constant;
 import com.ark.bookedapps.Utility.Utilities;
@@ -30,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,71 +60,33 @@ public class HomeApp extends AppCompatActivity {
         binding.cardAdmin.setVisibility(View.GONE);
         binding.cardProfile.setVisibility(View.GONE);
 
-        binding.cardAdmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(AdministratorMenu.class);
-            }
+        binding.cardAdmin.setOnClickListener(view -> updateUI(AdministratorMenu.class));
+        binding.cardInformation.setOnClickListener(view -> updateUI(InformationSalon.class));
+        binding.cardMyTrans.setOnClickListener(view -> updateUI(MyOrder.class));
+        binding.cardOrdered.setOnClickListener(view -> updateUI(ManageOrderCustomer.class));
+
+        binding.cardChat.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeApp.this, Chat.class);
+            intent.putExtra("role", binding.nameUser.getText().toString());
+            startActivity(intent);
         });
 
-
-        binding.cardInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(InformationSalon.class);
-            }
+        binding.cardProfile.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeApp.this, ProfileUser.class);
+            intent.putExtra("uid", mUser.getUid());
+            startActivity(intent);
         });
 
-        binding.cardMyTrans.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(MyOrder.class);
-            }
+        binding.cardLogout.setOnClickListener(view -> {
+            mAuth.signOut();
+            updateUI(Login.class);
+            finish();
         });
 
-        binding.cardOrdered.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManageOrderCustomer.class);
-            }
-        });
-
-        binding.cardChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeApp.this, Chat.class);
-                intent.putExtra("role", binding.nameUser.getText().toString());
-                startActivity(intent);
-
-            }
-        });
-
-        binding.cardProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeApp.this, ProfileUser.class);
-                intent.putExtra("uid", mUser.getUid());
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        binding.cardLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                updateUI(Login.class);
-                finish();
-            }
-        });
-
-        binding.swipeRefreshHomeApp.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                max_load_data += 5;
-                setDataPackage();
-                binding.swipeRefreshHomeApp.setRefreshing(false);
-            }
+        binding.swipeRefreshHomeApp.setOnRefreshListener(() -> {
+            max_load_data += 5;
+            setDataPackage();
+            binding.swipeRefreshHomeApp.setRefreshing(false);
         });
     }
 
@@ -168,10 +123,11 @@ public class HomeApp extends AppCompatActivity {
     private void checkUserLogin(){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (firebaseUser == null){
+        if (firebaseUser == null || !firebaseUser.isEmailVerified()){
             updateUI(Login.class);
             finish();
         }else {
+
             setLayoutRole();
 
             RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
@@ -234,10 +190,6 @@ public class HomeApp extends AppCompatActivity {
         }else {
             databaseReference.child("token_user").child(mUser.getUid()).child("token").setValue(token);
         }
-
-
-
     }
-
 
 }

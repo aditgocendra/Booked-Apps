@@ -2,51 +2,37 @@ package com.ark.bookedapps.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.ark.bookedapps.Model.ModelOrder;
-import com.ark.bookedapps.Notification.ClientApi;
-import com.ark.bookedapps.Notification.ServiceApi;
-import com.ark.bookedapps.Notification.ServiceNotification;
-import com.ark.bookedapps.R;
 import com.ark.bookedapps.Utility.Constant;
 import com.ark.bookedapps.Utility.Utilities;
 import com.ark.bookedapps.databinding.ActivityOrderSalonBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceIdReceiver;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Locale;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class OrderSalon extends AppCompatActivity {
 
@@ -74,41 +60,71 @@ public class OrderSalon extends AppCompatActivity {
         binding.priceDetail.setText("Rp. "+formatCurrenryRp(price));
         Picasso.get().load(urlThumbs).into(binding.thumbsPackage);
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OrderSalon.this, PackageDetail.class);
-                intent.putExtra("name_package", namePackage);
-                intent.putExtra("price", price);
-                intent.putExtra("url_thumbs", urlThumbs);
-                intent.putExtra("detail", detail);
-                intent.putExtra("key", key);
-                startActivity(intent);
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
         datePicker();
 
-        binding.timePick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timePicker();
-            }
-        });
+        binding.timePick.setOnClickListener(view -> timePicker());
 
-        binding.saveOrderSalon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.dateOrder.getText().toString().isEmpty()){
-                    binding.dateOrder.setError("Field tidak boleh kosong");
+        binding.saveOrderSalon.setOnClickListener(view -> {
+            if (binding.dateOrder.getText().toString().isEmpty()){
+                binding.dateOrder.setError("Field tidak boleh kosong");
 
-                }else if (binding.timeOrder.getText().toString().isEmpty()) {
-                    binding.timeOrder.setError("Field tidak boleh kosong");
+            }else if (binding.timeOrder.getText().toString().isEmpty()) {
+                binding.timeOrder.setError("Field tidak boleh kosong");
+            }else {
+                if (hour >= 16){
+                    Toast.makeText(this, "Order melebihi waktu buka salon", Toast.LENGTH_SHORT).show();
                 }else {
-                    orderPackage();
                     binding.progressCircular.setVisibility(View.VISIBLE);
                     binding.saveOrderSalon.setEnabled(false);
+
+                    checkSameTimeOrder();
+
                 }
+            }
+        });
+    }
+
+    private void checkSameTimeOrder() {
+
+        String time_order = binding.timeOrder.getText().toString();
+        String date_order = binding.dateOrder.getText().toString();
+        reference.child("order_salon").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean isOrder = false;
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    for (DataSnapshot ds : dataSnapshot.getChildren()){
+                        ModelOrder modelOrder = ds.getValue(ModelOrder.class);
+                        if (modelOrder != null){
+                            Log.d("test", modelOrder.getTime_order());
+                            if (modelOrder.getDate_order().equals(date_order) && modelOrder.getTime_order().equals(time_order)){
+                                isOrder = true;
+                            }
+                        }else {
+                            isOrder = false;
+                        }
+                    }
+                }
+
+                Handler handler = new Handler();
+
+                boolean finalIsOrder = isOrder;
+                handler.postDelayed(() -> {
+                    if (!finalIsOrder){
+                        orderPackage();
+                    }else {
+                        Toast.makeText(OrderSalon.this, "Hari dan jam tersebut telah diorder", Toast.LENGTH_SHORT).show();
+                        binding.progressCircular.setVisibility(View.INVISIBLE);
+                        binding.saveOrderSalon.setEnabled(true);
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(OrderSalon.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -123,7 +139,7 @@ public class OrderSalon extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.saveOrderSalon.setEnabled(false);
+                binding.saveOrderSalon.setEnabled(true);
                 Toast.makeText(OrderSalon.this, "Order berhasil", Toast.LENGTH_SHORT).show();
 
                 reference.child("token_user").child("admin").child("token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -136,15 +152,12 @@ public class OrderSalon extends AppCompatActivity {
                 });
 
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.saveOrderSalon.setEnabled(false);
-                Toast.makeText(OrderSalon.this, "Order gagal", Toast.LENGTH_SHORT).show();
-                updateUI(PackageDetail.class);
-                finish();
-            }
+        }).addOnFailureListener(e -> {
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            binding.saveOrderSalon.setEnabled(true);
+            Toast.makeText(OrderSalon.this, "Order gagal", Toast.LENGTH_SHORT).show();
+            updateUI(PackageDetail.class);
+            finish();
         });
 
 
@@ -178,9 +191,9 @@ public class OrderSalon extends AppCompatActivity {
 
 
     private void datePicker(){
-        MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("SELECT A DATE");
-        final MaterialDatePicker materialDatePicker = builder.build();
+        final MaterialDatePicker<Long> materialDatePicker = builder.build();
 
         binding.datePick.setOnClickListener(new View.OnClickListener() {
             @Override

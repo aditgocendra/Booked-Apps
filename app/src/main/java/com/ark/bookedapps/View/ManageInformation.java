@@ -4,34 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
-
 import com.ark.bookedapps.Model.ModelInformation;
 import com.ark.bookedapps.databinding.ActivityManageInformationBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -56,90 +47,73 @@ public class ManageInformation extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(AdministratorMenu.class);
-                finish();
+        binding.backBtn.setOnClickListener(view -> finish());
+        binding.selectImageOwner.setOnClickListener(view -> {
+            if (ActivityCompat.checkSelfPermission(ManageInformation.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                pickImageOnGalery();
+
+            }else{
+                ActivityCompat.requestPermissions(ManageInformation.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_MEDIA_GALLERY);
             }
-        });
 
-
-        binding.selectImageOwner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(ManageInformation.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    pickImageOnGalery();
-
-                }else{
-                    ActivityCompat.requestPermissions(ManageInformation.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_MEDIA_GALLERY);
-                }
-
-            }
         });
 
         getDataInformationSalon();
 
 
-        binding.saveInformationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.salonName.getText().toString().isEmpty()){
-                    binding.salonName.setError("Field tidak boleh kosong");
-                }
+        binding.saveInformationBtn.setOnClickListener(view -> {
+            if (binding.salonName.getText().toString().isEmpty()){
+                binding.salonName.setError("Field tidak boleh kosong");
+            }
 
-                else if (binding.locationSalon.getText().toString().isEmpty()){
-                    binding.locationSalon.setError("Field tidak boleh kosong");
-                }
+            else if (binding.locationSalon.getText().toString().isEmpty()){
+                binding.locationSalon.setError("Field tidak boleh kosong");
+            }
 
-                else if (binding.aboutSalon.getText().toString().isEmpty()){
-                    binding.aboutSalon.setError("Field tidak boleh kosong");
-                }
+            else if (binding.aboutSalon.getText().toString().isEmpty()){
+                binding.aboutSalon.setError("Field tidak boleh kosong");
+            }
 
-                else if (binding.ordered.getText().toString().isEmpty()){
-                    binding.ordered.setError("Field tidak boleh kosong");
-                }
+            else if (binding.ordered.getText().toString().isEmpty()){
+                binding.ordered.setError("Field tidak boleh kosong");
+            }
 
-                else if (binding.nameOwnerSalon.getText().toString().isEmpty()){
-                    binding.nameOwnerSalon.setError("Field tidak boleh kosong");
-                }
+            else if (binding.nameOwnerSalon.getText().toString().isEmpty()){
+                binding.nameOwnerSalon.setError("Field tidak boleh kosong");
+            }
 
-                else if (binding.emailOwnerSalon.getText().toString().isEmpty()){
-                    binding.emailOwnerSalon.setError("Field tidak boleh kosong");
-                }
+            else if (binding.emailOwnerSalon.getText().toString().isEmpty()){
+                binding.emailOwnerSalon.setError("Field tidak boleh kosong");
+            }
 
-                else{
-                    if (fileUri != null){
-                        saveOwnerImage();
-                    }else {
-                        saveInformationSalon(urlPhoto);
-                    }
+            else{
+                if (fileUri != null){
+                    saveOwnerImage();
+                }else {
+                    saveInformationSalon(urlPhoto);
                 }
             }
         });
     }
 
     private void getDataInformationSalon(){
-        databaseReference.child("information_salon").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
-                    ModelInformation modelInformation = task.getResult().getValue(ModelInformation.class);
+        databaseReference.child("information_salon").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                ModelInformation modelInformation = task.getResult().getValue(ModelInformation.class);
 
-                    assert modelInformation != null;
-                    binding.salonName.setText(modelInformation.getSalon_name());
-                    binding.locationSalon.setText(modelInformation.getSalon_location());
-                    binding.aboutSalon.setText(modelInformation.getSalon_about());
-                    binding.ordered.setText(modelInformation.getOrdered());
-                    binding.nameOwnerSalon.setText(modelInformation.getOwner_salon());
-                    binding.emailOwnerSalon.setText(modelInformation.getEmail_owner_salon());
+                assert modelInformation != null;
+                binding.salonName.setText(modelInformation.getSalon_name());
+                binding.locationSalon.setText(modelInformation.getSalon_location());
+                binding.aboutSalon.setText(modelInformation.getSalon_about());
+                binding.ordered.setText(modelInformation.getOrdered());
+                binding.nameOwnerSalon.setText(modelInformation.getOwner_salon());
+                binding.emailOwnerSalon.setText(modelInformation.getEmail_owner_salon());
 
-                    Picasso.get().load(modelInformation.getUrl_owner_image()).resize(50,50).centerCrop().into(binding.thumbsOwnerImage);
-                    urlPhoto = modelInformation.getUrl_owner_image();
+                Picasso.get().load(modelInformation.getUrl_owner_image()).resize(50,50).centerCrop().into(binding.thumbsOwnerImage);
+                urlPhoto = modelInformation.getUrl_owner_image();
 
-                }else{
-                    Toast.makeText(ManageInformation.this, "Gagal mengambil data", Toast.LENGTH_SHORT).show();
-                }
+            }else{
+                Toast.makeText(ManageInformation.this, "Gagal mengambil data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -207,12 +181,7 @@ public class ManageInformation extends AppCompatActivity {
                     updateUI(InformationSalon.class);
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ManageInformation.this, "Gagal mengubah data", Toast.LENGTH_SHORT).show();
-            }
-        });
+        }).addOnFailureListener(e -> Toast.makeText(ManageInformation.this, "Gagal mengubah data", Toast.LENGTH_SHORT).show());
     }
 
     private void deleteOldPhotoOwner(){
@@ -220,12 +189,7 @@ public class ManageInformation extends AppCompatActivity {
         String name_photo = storage.getReferenceFromUrl(urlPhoto).getName();
         StorageReference deleteRef = storage.getReference("owner_image/"+name_photo);
 
-        deleteRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                updateUI(InformationSalon.class);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        deleteRef.delete().addOnSuccessListener(unused -> updateUI(InformationSalon.class)).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(ManageInformation.this, "Gagal menghapus photo lama owner", Toast.LENGTH_SHORT).show();

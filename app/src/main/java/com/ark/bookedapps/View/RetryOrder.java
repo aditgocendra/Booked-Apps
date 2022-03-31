@@ -16,15 +16,11 @@ import com.ark.bookedapps.Utility.BrokenConnection;
 import com.ark.bookedapps.Utility.Constant;
 import com.ark.bookedapps.Utility.Utilities;
 import com.ark.bookedapps.databinding.ActivityRetryOrderBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -65,38 +61,14 @@ public class RetryOrder extends AppCompatActivity {
         }
 
         datePicker();
-        binding.timePick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timePicker();
-            }
-        });
-
-
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(MyOrder.class);
-                finish();
-            }
-        });
-
-        binding.saveRetryOrderSalon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateDataOrder();
-            }
-        });
+        binding.timePick.setOnClickListener(view -> timePicker());
+        binding.backBtn.setOnClickListener(view -> finish());
+        binding.saveRetryOrderSalon.setOnClickListener(view -> updateDataOrder());
     }
 
     private void getAdminToken(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("token_user").child("admin").child("token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                tokenUser = task.getResult().getValue().toString();
-            }
-        });
+        reference.child("token_user").child("admin").child("token").get().addOnCompleteListener(task -> tokenUser = task.getResult().getValue().toString());
     }
 
     private void updateDataOrder(){
@@ -112,39 +84,31 @@ public class RetryOrder extends AppCompatActivity {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        reference.child("order_salon").child(user.getUid()).child(keyOrder).setValue(modelOrder).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(RetryOrder.this, "Pengajuan ulang berhasil", Toast.LENGTH_SHORT).show();
+        reference.child("order_salon").child(user.getUid()).child(keyOrder).setValue(modelOrder).addOnSuccessListener(unused -> {
+            Toast.makeText(RetryOrder.this, "Pengajuan ulang berhasil", Toast.LENGTH_SHORT).show();
 
-                try {
-                    JSONArray token = new JSONArray();
-                    token.put(tokenUser);
+            try {
+                JSONArray token = new JSONArray();
+                token.put(tokenUser);
 
-                    JSONObject data = new JSONObject();
-                    data.put("uid_receiver", "-");
-                    data.put("receiver", "Admin");
-                    data.put("title", "Pengajuan ulang pesanan");
-                    data.put("message", "Haloo admin ada yang melakukan pengajuan ulang pesanan nih");
+                JSONObject data = new JSONObject();
+                data.put("uid_receiver", "-");
+                data.put("receiver", "Admin");
+                data.put("title", "Pengajuan ulang pesanan");
+                data.put("message", "Haloo admin ada yang melakukan pengajuan ulang pesanan nih");
 
-                    JSONObject body = new JSONObject();
-                    body.put(Constant.REMOTE_MSG_DATA, data);
-                    body.put(Constant.REMOTE_MSG_REGISTRATION_IDS, token);
+                JSONObject body = new JSONObject();
+                body.put(Constant.REMOTE_MSG_DATA, data);
+                body.put(Constant.REMOTE_MSG_REGISTRATION_IDS, token);
 
-                    Utilities.sendNotification(body.toString(), RetryOrder.this);
-                }catch (Exception e){
-                    Toast.makeText(RetryOrder.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-                updateUI(MyOrder.class);
-                finish();
+                Utilities.sendNotification(body.toString(), RetryOrder.this);
+            }catch (Exception e){
+                Toast.makeText(RetryOrder.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(RetryOrder.this, "Gagal mengajukan ulang pesanan", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+            updateUI(MyOrder.class);
+            finish();
+        }).addOnFailureListener(e -> Toast.makeText(RetryOrder.this, "Gagal mengajukan ulang pesanan", Toast.LENGTH_SHORT).show());
     }
 
 
@@ -158,9 +122,9 @@ public class RetryOrder extends AppCompatActivity {
     }
 
     private void datePicker(){
-        MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("SELECT A DATE");
-        final MaterialDatePicker materialDatePicker = builder.build();
+        final MaterialDatePicker<Long> materialDatePicker = builder.build();
 
         binding.datePick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,16 +144,13 @@ public class RetryOrder extends AppCompatActivity {
     private void timePicker() {
         TimePickerDialog timePickerDialog;
         Calendar calendar = Calendar.getInstance();
-        timePickerDialog = new TimePickerDialog(RetryOrder.this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfday, int minuteOfDay) {
+        timePickerDialog = new TimePickerDialog(RetryOrder.this, (timePicker, hourOfday, minuteOfDay) -> {
 
-                hour = hourOfday;
-                minute = minuteOfDay;
+            hour = hourOfday;
+            minute = minuteOfDay;
 
-                calendar.set(0,0,0, hour, minute);
-                binding.timeOrder.setText(DateFormat.format("hh:mm aa", calendar));
-            }
+            calendar.set(0,0,0, hour, minute);
+            binding.timeOrder.setText(DateFormat.format("hh:mm aa", calendar));
         }, 24, 0, true);
 
         timePickerDialog.show();

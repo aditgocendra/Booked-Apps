@@ -3,7 +3,6 @@ package com.ark.bookedapps.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,9 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
 import com.ark.bookedapps.Model.ModelPackage;
-
 import com.ark.bookedapps.databinding.ActivityPackageAddBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -46,39 +42,26 @@ public class PackageAdd extends AppCompatActivity {
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
-        binding.selectImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickImageOnGalery();
-            }
-        });
+        binding.selectImageBtn.setOnClickListener(view -> pickImageOnGalery());
 
-        binding.savePaketBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.namePackageTi.getText().toString().isEmpty()){
-                    binding.namePackageTi.setError("Nama paket harus diisi");
-                }
-                else if (binding.priceTi.getText().toString().isEmpty()){
-                    binding.namePackageTi.setError("Harga paket harus diisi");
-                }
-                else if (binding.detailTi.getText().toString().isEmpty()){
-                    binding.namePackageTi.setError("Detail paket harus diisi");
+        binding.savePaketBtn.setOnClickListener(view -> {
+            if (binding.namePackageTi.getText().toString().isEmpty()){
+                binding.namePackageTi.setError("Nama paket harus diisi");
+            }
+            else if (binding.priceTi.getText().toString().isEmpty()){
+                binding.namePackageTi.setError("Harga paket harus diisi");
+            }
+            else if (binding.detailTi.getText().toString().isEmpty()){
+                binding.namePackageTi.setError("Detail paket harus diisi");
+            }else {
+                if (fileUri != null){
+                    saveImagePackage();
+                    binding.progressCircular.setVisibility(View.VISIBLE);
+                    binding.savePaketBtn.setEnabled(false);
                 }else {
-                    if (fileUri != null){
-                        saveImagePackage();
-                        binding.progressCircular.setVisibility(View.VISIBLE);
-                        binding.savePaketBtn.setEnabled(false);
-                    }else {
-                        Toast.makeText(PackageAdd.this, "Anda belum mengupload photo", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(PackageAdd.this, "Anda belum mengupload photo", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -129,25 +112,20 @@ public class PackageAdd extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(PackageAdd.this, "Photo gagal diupload", Toast.LENGTH_SHORT).show();
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        }).addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        saveDataPackage(String.valueOf(uri));
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(PackageAdd.this, "Url photo gagal didownload", Toast.LENGTH_SHORT).show();
-
-                        binding.progressCircular.setVisibility(View.INVISIBLE);
-                        binding.savePaketBtn.setEnabled(true);
-                    }
-                });
+            public void onSuccess(Uri uri) {
+                saveDataPackage(String.valueOf(uri));
             }
-        });
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PackageAdd.this, "Url photo gagal didownload", Toast.LENGTH_SHORT).show();
+
+                binding.progressCircular.setVisibility(View.INVISIBLE);
+                binding.savePaketBtn.setEnabled(true);
+            }
+        }));
 
     }
 
@@ -157,24 +135,18 @@ public class PackageAdd extends AppCompatActivity {
         String detail = binding.detailTi.getText().toString();
 
         ModelPackage modelPackage = new ModelPackage(package_name, price, detail, urlPhoto);
-        databaseReference.child("package_salon").push().setValue(modelPackage).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(PackageAdd.this, "Berhasil menyimpan data", Toast.LENGTH_SHORT).show();
-                updateUI(ManagePackage.class);
+        databaseReference.child("package_salon").push().setValue(modelPackage).addOnSuccessListener(unused -> {
+            Toast.makeText(PackageAdd.this, "Berhasil menyimpan data", Toast.LENGTH_SHORT).show();
+            updateUI(ManagePackage.class);
 
-                binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.savePaketBtn.setEnabled(true);
-                finish();
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            binding.savePaketBtn.setEnabled(true);
+            finish();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PackageAdd.this, "Gagal menyimpan data", Toast.LENGTH_SHORT).show();
-                binding.progressCircular.setVisibility(View.INVISIBLE);
-                binding.savePaketBtn.setEnabled(true);
-            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(PackageAdd.this, "Gagal menyimpan data", Toast.LENGTH_SHORT).show();
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            binding.savePaketBtn.setEnabled(true);
         });
 
     }

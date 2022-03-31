@@ -39,12 +39,7 @@ public class ManageUser extends AppCompatActivity {
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(AdministratorMenu.class);
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
         binding.recycleManageUser.setLayoutManager(mLayout);

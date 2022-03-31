@@ -22,6 +22,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class ProfileUser extends AppCompatActivity {
 
     private ActivityProfileUserBinding binding;
@@ -43,37 +45,29 @@ public class ProfileUser extends AppCompatActivity {
         }
 
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
-        binding.saveChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.nameUserTiEdit.getText().toString().isEmpty()){
-                    binding.nameUserTiEdit.setError("Tidak boleh kosong");
-                }else if (binding.numberUserTiEdit.getText().toString().isEmpty()){
-                    binding.numberUserTiEdit.setError("Tidak boleh kosong");
-                }else {
-                    changeProfile();
-                }
+        binding.saveChange.setOnClickListener(view -> {
+            if (binding.nameUserTiEdit.getText().toString().isEmpty()){
+                binding.nameUserTiEdit.setError("Tidak boleh kosong");
+            }else if (binding.numberUserTiEdit.getText().toString().isEmpty()){
+                binding.numberUserTiEdit.setError("Tidak boleh kosong");
+            }else {
+                changeProfile();
             }
         });
     }
 
     private void setDataProfile(String uid) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("users").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
-                    ModelUser modelUser = task.getResult().getValue(ModelUser.class);
+        databaseReference.child("users").child(uid).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                ModelUser modelUser = Objects.requireNonNull(task.getResult()).getValue(ModelUser.class);
+                if (modelUser != null){
                     binding.nameUserTiEdit.setText(modelUser.getUsername());
-                    binding.numberUserTiEdit.setText(modelUser.getNo_telp());
+                    if (!modelUser.getNo_telp().equals("Belum diisi")){
+                        binding.numberUserTiEdit.setText(modelUser.getNo_telp());
+                    }
                 }
             }
         });
@@ -86,15 +80,13 @@ public class ProfileUser extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        assert fUser != null;
         ModelUser modelUser = new ModelUser(fUser.getEmail(), newUsername, newNumber,"Customer");
 
-        databaseReference.child("users").child(fUser.getUid()).setValue(modelUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ProfileUser.this, "Berhasil mengubah data", Toast.LENGTH_SHORT).show();
-                updateUI(HomeApp.class);
-                finish();
-            }
+        databaseReference.child("users").child(fUser.getUid()).setValue(modelUser).addOnSuccessListener(unused -> {
+            Toast.makeText(ProfileUser.this, "Berhasil mengubah data", Toast.LENGTH_SHORT).show();
+            updateUI(HomeApp.class);
+            finish();
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

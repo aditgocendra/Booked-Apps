@@ -32,13 +32,7 @@ public class PackageDetail extends AppCompatActivity {
         urlThumbs = getIntent().getStringExtra("url_thumbs");
         key = getIntent().getStringExtra("key");
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
         if (Constant.ROLE_USER.equals("Admin")){
             binding.orderNow.setEnabled(false);

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ark.bookedapps.Model.ModelOrder;
 import com.ark.bookedapps.Model.ModelPackage;
 import com.ark.bookedapps.R;
+import com.ark.bookedapps.View.MethodPayment;
 import com.ark.bookedapps.View.PaymentCard;
 import com.ark.bookedapps.View.RetryOrder;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -117,7 +118,7 @@ public class AdapterMyOrder extends RecyclerView.Adapter<AdapterMyOrder.MyViewHo
         holder.btnPayDP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.startActivity(new Intent(mContext, PaymentCard.class));
+                mContext.startActivity(new Intent(mContext, MethodPayment.class));
             }
         });
 

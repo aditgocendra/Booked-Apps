@@ -19,44 +19,11 @@ public class AdministratorMenu extends AppCompatActivity {
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        binding.cardManageInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManageInformation.class);
-            }
-        });
-
-        binding.cardPackageSalon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManagePackage.class);
-            }
-        });
-
-
-
-        binding.cardRekPay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManageRekening.class);
-            }
-        });
-
-        binding.cardHistoryOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HistoryOrder.class);
-            }
-        });
-
-
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-                finish();
-            }
-        });
+        binding.cardManageInformation.setOnClickListener(view -> updateUI(ManageInformation.class));
+        binding.cardPackageSalon.setOnClickListener(view -> updateUI(ManagePackage.class));
+        binding.cardMethodPay.setOnClickListener(view -> updateUI(ManageMethodPayment.class));
+        binding.cardHistoryOrder.setOnClickListener(view -> updateUI(HistoryOrder.class));
+        binding.backBtn.setOnClickListener(view -> finish());
 
 
     }

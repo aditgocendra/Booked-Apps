@@ -4,17 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
-
 import com.ark.bookedapps.Adapter.AdapterPersonalChat;
 import com.ark.bookedapps.Model.ModelMessage;
 import com.ark.bookedapps.Model.ModelUser;
-import com.ark.bookedapps.R;
 import com.ark.bookedapps.Utility.BrokenConnection;
 import com.ark.bookedapps.Utility.Constant;
 import com.ark.bookedapps.Utility.Utilities;
@@ -30,10 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,22 +52,14 @@ public class PersonalChat extends AppCompatActivity {
         uidReceiver = getIntent().getStringExtra("uid");
         roleSender = getIntent().getStringExtra("role_sender");
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PersonalChat.this, Chat.class);
-                intent.putExtra("role", roleSender);
-                startActivity(intent);
-            }
+        binding.backBtn.setOnClickListener(view -> {
+            finish();
         });
 
-        binding.btnSendChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!binding.chatSend.getText().toString().isEmpty()){
-                    binding.btnSendChat.setEnabled(false);
-                    sendMessage();
-                }
+        binding.btnSendChat.setOnClickListener(view -> {
+            if (!binding.chatSend.getText().toString().isEmpty()){
+                binding.btnSendChat.setEnabled(false);
+                sendMessage();
             }
         });
 
@@ -169,21 +154,15 @@ public class PersonalChat extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 if (roleSender.equals("Admin")){
-                    databaseReference.child("token_user").child(uidReceiver).child("token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            if (task.isSuccessful()){
-                                sendingCloud(task.getResult().getValue().toString());
-                            }
+                    databaseReference.child("token_user").child(uidReceiver).child("token").get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            sendingCloud(task.getResult().getValue().toString());
                         }
                     });
                 }else {
-                    databaseReference.child("token_user").child("admin").child("token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            if (task.isSuccessful()){
-                                sendingCloud(task.getResult().getValue().toString());
-                            }
+                    databaseReference.child("token_user").child("admin").child("token").get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            sendingCloud(task.getResult().getValue().toString());
                         }
                     });
                 }
@@ -229,15 +208,12 @@ public class PersonalChat extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         if (!uid.equals(user.getUid())){
-            databaseReference.child("users").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if(task.isSuccessful()){
-                        ModelUser modelUser = task.getResult().getValue(ModelUser.class);
-                        binding.usernameTvPersonal.setText(modelUser.getUsername());
-                    }else {
-                        Toast.makeText(PersonalChat.this, "Data gagal diambil", Toast.LENGTH_SHORT).show();
-                    }
+            databaseReference.child("users").child(uid).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    ModelUser modelUser = task.getResult().getValue(ModelUser.class);
+                    binding.usernameTvPersonal.setText(modelUser.getUsername());
+                }else {
+                    Toast.makeText(PersonalChat.this, "Data gagal diambil", Toast.LENGTH_SHORT).show();
                 }
             });
         }else {

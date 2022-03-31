@@ -1,20 +1,10 @@
 package com.ark.bookedapps.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.ark.bookedapps.R;
 import com.ark.bookedapps.databinding.ActivityLoginBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -33,53 +23,47 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        binding.redirectRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(Register.class);
+        binding.redirectRegister.setOnClickListener(view -> updateUI(Register.class));
+
+        binding.loginBtn.setOnClickListener(view -> {
+            String email = binding.emailUser.getText().toString();
+            String pass = binding.passUser.getText().toString();
+
+            if (email.isEmpty()){
+                binding.emailUser.setError("Email tidak boleh kosong");
+            }else if(!ValidateEmail(email)){
+                Toast.makeText(Login.this, "Format email tidak cocok", Toast.LENGTH_SHORT).show();
+            } else if(pass.isEmpty()){
+                binding.passUser.setError("Password tidak boleh kosong");
+            }else {
+                Login(email, pass);
+                binding.loginBtn.setEnabled(false);
             }
         });
 
-        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = binding.emailUser.getText().toString();
-                String pass = binding.passUser.getText().toString();
-
-                if (email.isEmpty()){
-                    binding.emailUser.setError("Email tidak boleh kosong");
-                }else if(!ValidateEmail(email)){
-                    Toast.makeText(Login.this, "Format email tidak cocok", Toast.LENGTH_SHORT).show();
-                } else if(pass.isEmpty()){
-                    binding.passUser.setError("Password tidak boleh kosong");
-                }else {
-                    Login(email, pass);
-                    binding.loginBtn.setEnabled(false);
-                }
-            }
-        });
-
-        binding.redirectForgotPass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ForgotPassword.class);
-                finish();
-            }
+        binding.redirectForgotPass.setOnClickListener(view -> {
+            updateUI(ForgotPassword.class);
+            finish();
         });
     }
 
     private void Login(String email, String pass){
-        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    updateUI(HomeApp.class);
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (task.isSuccessful()){
+                assert user != null;
+                if (user.isEmailVerified()){
                     binding.loginBtn.setEnabled(true);
+                    updateUI(HomeApp.class);
                     finish();
                 }else {
-                    Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     binding.loginBtn.setEnabled(true);
+                    Toast.makeText(Login.this, "Email anda belum diverifikasi", Toast.LENGTH_SHORT).show();
                 }
+
+            }else {
+                Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                binding.loginBtn.setEnabled(true);
             }
         });
     }

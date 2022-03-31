@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,13 +45,7 @@ public class MyOrder extends AppCompatActivity {
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(HomeApp.class);
-                finish();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> finish());
 
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(this);
         binding.recycleMyOrder.setLayoutManager(mLayout);
@@ -73,12 +68,10 @@ public class MyOrder extends AppCompatActivity {
                     listOrder.add(modelOrder);
                     getDataPackage(modelOrder.getKey_package());
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(MyOrder.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -86,19 +79,18 @@ public class MyOrder extends AppCompatActivity {
     private void getDataPackage(String keyPackage){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        databaseReference.child("package_salon").child(keyPackage).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
-                    ModelPackage modelPackage = task.getResult().getValue(ModelPackage.class);
-                    listPackage.add(modelPackage);
+        databaseReference.child("package_salon").child(keyPackage).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                ModelPackage modelPackage = task.getResult().getValue(ModelPackage.class);
+                listPackage.add(modelPackage);
 
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
                     adapterMyOrder = new AdapterMyOrder(listOrder, listPackage,MyOrder.this);
                     binding.recycleMyOrder.setAdapter(adapterMyOrder);
-
-                }else {
-                    Toast.makeText(MyOrder.this, "Kesalahan pengambilan data", Toast.LENGTH_SHORT).show();
-                }
+                }, 500);
+            }else {
+                Toast.makeText(MyOrder.this, "Kesalahan pengambilan data", Toast.LENGTH_SHORT).show();
             }
         });
     }

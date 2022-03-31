@@ -50,37 +50,21 @@ public class PackageEdit extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
+        binding.backBtn.setOnClickListener(view -> finish());
+        binding.selectImageBtnEdit.setOnClickListener(view -> pickImageOnGalery());
 
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI(ManagePackage.class);
-                finish();
-            }
-        });
-
-        binding.selectImageBtnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickImageOnGalery();
-            }
-        });
-
-        binding.editPaketBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.namePackageTiEdit.getText().toString().isEmpty()){
-                    binding.namePackageTiEdit.setError("Nama paket harus diisi");
-                }else if (binding.priceTiEdit.getText().toString().isEmpty()){
-                    binding.priceTiEdit.setError("Harga tidak boleh kosong");
-                }else if (binding.detailTiEdit.getText().toString().isEmpty()){
-                    binding.detailTiEdit.setError("Detail tidak boleh kosong");
+        binding.editPaketBtn.setOnClickListener(view -> {
+            if (binding.namePackageTiEdit.getText().toString().isEmpty()){
+                binding.namePackageTiEdit.setError("Nama paket harus diisi");
+            }else if (binding.priceTiEdit.getText().toString().isEmpty()){
+                binding.priceTiEdit.setError("Harga tidak boleh kosong");
+            }else if (binding.detailTiEdit.getText().toString().isEmpty()){
+                binding.detailTiEdit.setError("Detail tidak boleh kosong");
+            }else {
+                if (fileUri != null){
+                    savePackageImage();
                 }else {
-                    if (fileUri != null){
-                        savePackageImage();
-                    }else {
-                        savePackage(urlPhoto);
-                    }
+                    savePackage(urlPhoto);
                 }
             }
         });
@@ -143,20 +127,12 @@ public class PackageEdit extends AppCompatActivity {
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = storageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PackageEdit.this, "Photo gagal diupload", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        uploadTask.addOnFailureListener(e -> Toast.makeText(PackageEdit.this, "Photo gagal diupload", Toast.LENGTH_SHORT).show()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        deleteOldPhoto();
-                        savePackage(String.valueOf(uri));
-                    }
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    deleteOldPhoto();
+                    savePackage(String.valueOf(uri));
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -174,13 +150,10 @@ public class PackageEdit extends AppCompatActivity {
         String detail_new = binding.detailTiEdit.getText().toString();
 
         ModelPackage modelPackage = new ModelPackage(package_name_new, price_new, detail_new, urlPhotoNew);
-        databaseReference.child("package_salon").child(key).setValue(modelPackage).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                updateUI(ManagePackage.class);
-                finish();
+        databaseReference.child("package_salon").child(key).setValue(modelPackage).addOnSuccessListener(unused -> {
+            updateUI(ManagePackage.class);
+            finish();
 
-            }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -194,18 +167,9 @@ public class PackageEdit extends AppCompatActivity {
         String name_photo = storage.getReferenceFromUrl(urlPhoto).getName();
         StorageReference deleteRef = storage.getReference("package_image/"+name_photo);
 
-        deleteRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                updateUI(ManagePackage.class);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PackageEdit.this, "Gagal menghapus photo lama", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        deleteRef.delete()
+                .addOnSuccessListener(unused -> updateUI(ManagePackage.class))
+                .addOnFailureListener(e -> Toast.makeText(PackageEdit.this, "Gagal menghapus photo lama", Toast.LENGTH_SHORT).show());
     }
 
 

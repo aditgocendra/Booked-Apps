@@ -13,6 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookedApps">
         <activity
+            android:name=".View.PaymentWallet"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageWalletPayment"
+            android:exported="false" />
+        <activity
+            android:name=".View.ManageMethodPayment"
+            android:exported="false" />
+        <activity
+            android:name=".View.MethodPayment"
+            android:exported="false" />
+        <activity
             android:name=".View.ProfileUser"
             android:exported="false" />
         <activity
@@ -20,9 +32,6 @@
             android:exported="false" />
         <activity
             android:name=".View.HistoryOrder"
-            android:exported="false" />
-        <activity
-            android:name=".View.ManageOrderAllUser"
             android:exported="false" />
         <activity
             android:name=".Utility.BrokenConnection"
