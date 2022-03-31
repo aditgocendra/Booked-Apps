@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter Status Pesanan"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textAlignment="center"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/all_filter_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Semua"
+            android:textColor="@color/blue_light"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:cornerRadius="6dp"
+            app:strokeColor="@color/blue_light"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirm_pay_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Pembayaran DP Dikonfirmasi"
+            android:textColor="@color/light_text"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:cornerRadius="6dp"
+            app:strokeColor="@color/blue_light"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/wait_pay_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="(Disetujui) Menunggu Pembayaran"
+            android:textColor="@color/light_text"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:cornerRadius="6dp"
+            app:strokeColor="@color/blue_light"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/wait_confirm_btn"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Menunggu Konfirmasi"
+                android:textColor="@color/light_text"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/blue_light"
+                android:layout_weight="0.35"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reject_confirm_btn"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Dibatalkan"
+                android:textColor="@color/light_text"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/blue_light"
+                android:layout_weight="0.65"/>
+
+        </LinearLayout>
+
+
+
+        <Button
+            android:id="@+id/finish_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textAllCaps="false"
+            android:text="Filter"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="12sp"
+            android:backgroundTint="@color/blue_light"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
